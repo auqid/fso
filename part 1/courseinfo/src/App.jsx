@@ -8,14 +8,22 @@ const Statistics = ({ total, average, positiveFeedBack }) => {
     return <>No Feedbad given </>;
   }
   return (
-    <>
-      <br />
-      All {total}
-      <br />
-      average {average}
-      <br />
-      Positive {positiveFeedBack.toFixed(1)}
-    </>
+    <table>
+      <tbody>
+        <tr>
+          <td>All</td>
+          <td>{total}</td>
+        </tr>
+        <tr>
+          <td>Average</td>
+          <td>{average.toFixed(1)}</td>
+        </tr>
+        <tr>
+          <td>Positive</td>
+          <td>{positiveFeedBack.toFixed(1)} %</td>
+        </tr>
+      </tbody>
+    </table>
   );
 };
 
@@ -53,10 +61,11 @@ const App = () => {
       <Button onClick={handleGood} text="good" />
       <Button onClick={handleNeutral} text="neutral" />
       <Button onClick={handleBad} text="bad" />
-      <br />
+
       <StatisticLine text="good" value={good} />
       <StatisticLine text="neutral" value={neutral} />
       <StatisticLine text="bad" value={bad} />
+      <br />
       <Statistics
         total={total}
         average={average}
