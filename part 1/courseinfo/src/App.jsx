@@ -1,59 +1,47 @@
-const Header = ({ course }) => {
-  return <h1>{course}</h1>;
+import { useState } from "react";
+
+export const Button = ({ text, onClick }) => {
+  return <button onClick={onClick}>{text}</button>;
 };
 
-const Part = ({ part, exercises }) => {
-  return (
-    <p>
-      {part} {exercises}
-    </p>
-  );
-};
-
-const Content = ({ course }) => {
-  return (
-    <>
-      {course.map((x, index) => {
-        return <Part key={index} part={x.name} exercises={x.exercises} />;
-      })}
-    </>
-  );
-};
-
-const Total = ({ course }) => {
-  const total = course.reduce((acc, curr) => acc + curr.exercises, 0); 
-  console.log(total);
-  return (
-    <>
-      <p>Number of exercises {total}</p>
-    </>
-  );
-};
 const App = () => {
-  const course = {
-    name: "Half Stack application development",
-    parts: [
-      {
-        name: "Fundamentals of React",
-        exercises: 10,
-      },
-      {
-        name: "Using props to pass data",
-        exercises: 7,
-      },
-      {
-        name: "State of a component",
-        exercises: 14,
-      },
-    ],
+  const [good, setGood] = useState(0);
+  const [neutral, setNeutral] = useState(0);
+  const [bad, setBad] = useState(0);
+  const [total, setTotal] = useState(0);
+  const handleGood = () => {
+    setGood(good + 1);
+    setTotal(total + 1);
   };
-
+  const handleNeutral = () => {
+    setNeutral(neutral + 1);
+    setTotal(total + 1);
+  };
+  const handleBad = () => {
+    setBad(bad + 1);
+    setTotal(total + 1);
+  };
+  const average = total === 0 ? 0 : (good * 1 + neutral * 0 + bad * -1) / total;
+  const positiveFeedBack = total === 0 ? 0 : (good / total) * 100;
   return (
-    <div>
-      <Header course={course.name} />
-      <Content course={course.parts} />
-      <Total course={course.parts} />
-    </div>
+    <>
+      <h1>Give Feedback</h1>
+      <Button onClick={handleGood} text="good" />
+      <Button onClick={handleNeutral} text="neutral" />
+      <Button onClick={handleBad} text="bad" />
+      <br />
+      Good {good}
+      <br />
+      Neutral {neutral}
+      <br />
+      Bad {bad}
+      <br />
+      All {total}
+      <br />
+      average {average}
+      <br />
+      Positive {positiveFeedBack.toFixed(1)}
+    </>
   );
 };
 
