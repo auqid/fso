@@ -13,15 +13,15 @@ const Part = ({ part, exercises }) => {
 const Content = ({ course }) => {
   return (
     <>
-      {course.map((x) => {
-        return <Part part={x.name} exercises={x.exercises} />;
+      {course.map((x, index) => {
+        return <Part key={index} part={x.name} exercises={x.exercises} />;
       })}
     </>
   );
 };
 
 const Total = ({ course }) => {
-  const total = course.reduce((acc, curr) => acc + curr.exercises, 0);
+  const total = course.reduce((acc, curr) => acc + curr.exercises, 0); 
   console.log(total);
   return (
     <>
