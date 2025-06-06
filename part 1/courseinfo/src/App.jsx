@@ -4,6 +4,9 @@ const Button = ({ text, onClick }) => {
   return <button onClick={onClick}>{text}</button>;
 };
 const Statistics = ({ total, average, positiveFeedBack }) => {
+  if (total === 0) {
+    return <>No Feedbad given </>;
+  }
   return (
     <>
       <br />
@@ -46,6 +49,7 @@ const App = () => {
       Neutral {neutral}
       <br />
       Bad {bad}
+      <br />
       <Statistics
         total={total}
         average={average}
