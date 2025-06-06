@@ -18,6 +18,16 @@ const Statistics = ({ total, average, positiveFeedBack }) => {
     </>
   );
 };
+
+const StatisticLine = ({ text, value }) => {
+  return (
+    <>
+      <br />
+      {text} {value}
+    </>
+  );
+};
+
 const App = () => {
   const [good, setGood] = useState(0);
   const [neutral, setNeutral] = useState(0);
@@ -44,12 +54,9 @@ const App = () => {
       <Button onClick={handleNeutral} text="neutral" />
       <Button onClick={handleBad} text="bad" />
       <br />
-      Good {good}
-      <br />
-      Neutral {neutral}
-      <br />
-      Bad {bad}
-      <br />
+      <StatisticLine text="good" value={good} />
+      <StatisticLine text="neutral" value={neutral} />
+      <StatisticLine text="bad" value={bad} />
       <Statistics
         total={total}
         average={average}
