@@ -1,9 +1,20 @@
 import { useState } from "react";
 
-export const Button = ({ text, onClick }) => {
+const Button = ({ text, onClick }) => {
   return <button onClick={onClick}>{text}</button>;
 };
-
+const Statistics = ({ total, average, positiveFeedBack }) => {
+  return (
+    <>
+      <br />
+      All {total}
+      <br />
+      average {average}
+      <br />
+      Positive {positiveFeedBack.toFixed(1)}
+    </>
+  );
+};
 const App = () => {
   const [good, setGood] = useState(0);
   const [neutral, setNeutral] = useState(0);
@@ -35,12 +46,11 @@ const App = () => {
       Neutral {neutral}
       <br />
       Bad {bad}
-      <br />
-      All {total}
-      <br />
-      average {average}
-      <br />
-      Positive {positiveFeedBack.toFixed(1)}
+      <Statistics
+        total={total}
+        average={average}
+        positiveFeedBack={positiveFeedBack}
+      />
     </>
   );
 };
