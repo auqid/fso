@@ -23,6 +23,7 @@ const App = () => {
   const [newNumber, setNewNumber] = useState("");
   const [search, setSearch] = useState("");
   const [success, setSuccess] = useState("");
+  const [error, setError] = useState("");
   const handleChange = (event) => {
     setNewName(event.target.value);
   };
@@ -50,35 +51,60 @@ const App = () => {
           `${newName} already present, replace the old number with new one? `
         )
       ) {
-        personService.update(id, copyName).then((response) => {
-          setPersons(
-            persons.map((person) => (person.id !== id ? person : response))
-          );
-          setNewName("");
-          setNewNumber("");
-          setSuccess("Person Replaced Successfully");
-          setTimeout(() => {
-            setSuccess("");
-          }, 5000);
-        });
+        personService
+          .update(id, copyName)
+          .then((response) => {
+            setPersons(
+              persons.map((person) => (person.id !== id ? person : response))
+            );
+            setNewName("");
+            setNewNumber("");
+            setSuccess("Person Replaced Successfully");
+            setTimeout(() => {
+              setSuccess("");
+            }, 5000);
+          })
+          .catch((error) => {
+            setPersons(persons.filter((person) => person.id !== id));
+            setError(
+              `Information of ${newName} has already been removed from server`
+            );
+            setTimeout(() => {
+              setSuccess("");
+            }, 5000);
+          });
       }
       return;
     }
 
-    personService.create(copyName).then((response) => {
-      setPersons(persons.concat(response));
-      setNewName("");
-      setNewNumber("");
-      setSuccess("Person Added Successfully");
-      setTimeout(() => {
-        setSuccess("");
-      }, 5000);
-    });
+    personService
+      .create(copyName)
+      .then((response) => {
+        setPersons(persons.concat(response));
+        setNewName("");
+        setNewNumber("");
+        setSuccess("Person Added Successfully");
+        setTimeout(() => {
+          setSuccess("");
+        }, 5000);
+      })
+      .catch((error) => {
+        setError("Error adding person");
+        setTimeout(() => {
+          setSuccess("");
+        }, 5000);
+      });
   };
   const handleDelete = (id) => {
     personService
       .deletePerson(id)
-      .then(() => setPersons(persons.filter((person) => person.id !== id)));
+      .then(() => setPersons(persons.filter((person) => person.id !== id)))
+      .catch((error) => {
+        setError("Person has already been removed from server");
+        setTimeout(() => {
+          setSuccess("");
+        }, 5000);
+      });
   };
 
   const filteredPersons = persons.filter((person) =>
@@ -87,7 +113,8 @@ const App = () => {
   return (
     <div>
       <h2>Phonebook</h2>
-      <Notification message={success} />
+      <Notification message={success} type="success" />
+      <Notification message={error} type="error" />
       <Filter search={search} onChange={handleSearch} />
 
       <h1>add a new</h1>
