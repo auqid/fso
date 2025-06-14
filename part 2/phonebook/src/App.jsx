@@ -1,16 +1,16 @@
 import { useState, useEffect } from "react";
-import axios from "axios";
 import PersonForm from "./components/PersonForm";
 import Filter from "./components/Filter";
 import Person from "./components/Person";
-
+import personService from "./services/numbers";
 const App = () => {
   const [persons, setPersons] = useState([]);
   useEffect(() => {
-    axios
-      .get("http://localhost:3001/persons")
+    personService
+      .getAll()
       .then((response) => {
-        setPersons(response.data);
+        console.log(response);
+        setPersons(response);
       })
       .catch((error) => {
         console.error("Error fetching data:", error);
@@ -31,27 +31,45 @@ const App = () => {
   };
   const addName = (event) => {
     event.preventDefault();
+    const copyName = {
+      name: newName,
+      number: newNumber,
+    };
     if (newName === "" || newNumber === "") {
       window.alert("Name or number cannot be empty");
       return;
     }
+
     if (persons.some((x) => x.name === newName)) {
-      window.alert(`${newName} already present`);
+      const id = persons.find((x) => x.name === newName).id;
+      if (
+        window.confirm(
+          `${newName} already present, replace the old number with new one? `
+        )
+      ) {
+        personService.update(id, copyName).then((response) => {
+          setPersons(
+            persons.map((person) => (person.id !== id ? person : response))
+          );
+          setNewName("");
+          setNewNumber("");
+        });
+      }
       return;
     }
 
-    const copyName = {
-      name: newName,
-      number: newNumber,
-      id: persons.length + 1,
-    };
-    console.log(copyName);
-    setPersons(persons.concat(copyName));
-    setNewName("");
-    setNewNumber("");
+    personService.create(copyName).then((response) => {
+      setPersons(persons.concat(response));
+      setNewName("");
+      setNewNumber("");
+    });
+  };
+  const handleDelete = (id) => {
+    personService
+      .deletePerson(id)
+      .then(() => setPersons(persons.filter((person) => person.id !== id)));
   };
 
-  // Filter persons based on search input
   const filteredPersons = persons.filter((person) =>
     person.name.toLowerCase().includes(search.toLowerCase())
   );
@@ -69,7 +87,7 @@ const App = () => {
         addName={addName}
       />
       <h2>Numbers</h2>
-      <Person persons={filteredPersons} />
+      <Person persons={filteredPersons} onDelete={handleDelete} />
     </div>
   );
 };

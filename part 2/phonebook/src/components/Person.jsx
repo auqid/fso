@@ -1,13 +1,22 @@
-import React from "react";
-
-const Person = ({ persons }) => {
+import personService from "../services/numbers";
+const Person = ({ persons, onDelete }) => {
   console.log("persons", persons);
+  const deletePerson = (id, name) => {
+    if (window.confirm(`delete ${name} ?`)) {
+      onDelete(id);
+    }
+  };
   return (
     <div>
       {persons.map((person) => (
-        <p key={person.id}>
-          {person.name} : {person.number}
-        </p>
+        <div key={person.id}>
+          <p>
+            {person.name} : {person.number}
+          </p>
+          <button onClick={() => deletePerson(person.id, person.name)}>
+            delete
+          </button>
+        </div>
       ))}
     </div>
   );
