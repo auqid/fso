@@ -1,7 +1,6 @@
 const express = require("express");
 const app = express();
 const morgan = require("morgan");
-
 let persons = [
   {
     id: "1",
@@ -26,13 +25,14 @@ let persons = [
 ];
 
 app.use(express.json());
-
+// app.use(cors());
 morgan.token("body", (request, response) => {
   return request.method === "POST" ? JSON.stringify(request.body) : "";
 });
 app.use(
   morgan(":method :url :status :res[content-length] - :response-time ms :body")
 );
+app.use(express.static("dist"));
 // get all persons
 app.get("/api/persons", (request, response) => {
   response.json(persons);
@@ -79,9 +79,9 @@ app.post("/api/persons", (request, response) => {
     });
   }
   const person = {
+    id: Math.floor(Math.random() * 10000).toString(),
     number: body.number,
     name: body.name,
-    id: Math.floor(Math.random() * 10000).toString(),
   };
 
   persons = persons.concat(person);
@@ -93,7 +93,7 @@ const unknownEndpoint = (request, response) => {
 
 app.use(unknownEndpoint);
 
-const PORT = 3000;
+const PORT = process.env.PORT || 3001;
 app.listen(PORT, () => {
   console.log(`listening on ${PORT}`);
 });
