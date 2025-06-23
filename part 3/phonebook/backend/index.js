@@ -42,8 +42,9 @@ app.get("/api/persons/:id", (request, response) => {
 // delete person
 app.delete("/api/persons/:id", (request, response) => {
   const id = request.params.id;
-  persons = persons.filter((x) => x.id !== id);
-  response.status(202).end();
+  Person.findByIdAndDelete(id).then((result) => {
+    response.status(204).end;
+  });
 });
 
 // add a person
