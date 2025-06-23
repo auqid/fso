@@ -14,7 +14,14 @@ if (!passwordOnly && (!name || !number)) {
 const url = `mongodb+srv://auqidirfan100:${password}@cluster0-test.icgy7b8.mongodb.net/phoneBook?retryWrites=true&w=majority&appName=Cluster0-test`;
 mongoose.set("strictQuery", false);
 
-mongoose.connect(url);
+mongoose
+  .connect(url)
+  .then((response) => {
+    console.log("Connected to Database");
+  })
+  .catch((error) => {
+    console.log("error connecting to database", error.message);
+  });
 
 const personSchema = new mongoose.Schema({
   name: String,

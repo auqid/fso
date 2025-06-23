@@ -1,28 +1,8 @@
+require("dotenv").config();
 const express = require("express");
 const app = express();
 const morgan = require("morgan");
-let persons = [
-  {
-    id: "1",
-    name: "Arto Hellas",
-    number: "040-123456",
-  },
-  {
-    id: "2",
-    name: "Ada Lovelace",
-    number: "39-44-5323523",
-  },
-  {
-    id: "3",
-    name: "Dan Abramov",
-    number: "12-43-234345",
-  },
-  {
-    id: "4",
-    name: "Mary Poppendieck",
-    number: "39-23-6423122",
-  },
-];
+const Person = require("./models/person");
 
 app.use(express.json());
 // app.use(cors());
@@ -33,9 +13,12 @@ app.use(
   morgan(":method :url :status :res[content-length] - :response-time ms :body")
 );
 app.use(express.static("dist"));
+
 // get all persons
 app.get("/api/persons", (request, response) => {
-  response.json(persons);
+  Person.find({}).then((persons) => {
+    response.json(persons);
+  });
 });
 
 // get Total numbers of persons
@@ -72,21 +55,23 @@ app.post("/api/persons", (request, response) => {
       error: "Content missing",
     });
   }
-  const nameExists = persons.find((x) => x.name === body.name);
-  if (nameExists) {
-    return response.status(404).json({
-      error: "name must be unique",
-    });
-  }
-  const person = {
+  // const nameExists = persons.find((x) => x.name === body.name);
+  // if (nameExists) {
+  //   return response.status(404).json({
+  //     error: "name must be unique",
+  //   });
+  // }
+  const person = new Person({
     id: Math.floor(Math.random() * 10000).toString(),
     number: body.number,
     name: body.name,
-  };
+  });
 
-  persons = persons.concat(person);
-  response.json(person);
+  person.save().then((savedPerson) => {
+    response.json(savedPerson);
+  });
 });
+
 const unknownEndpoint = (request, response) => {
   response.status(404).send({ error: "unknown endpoint" });
 };
@@ -94,6 +79,7 @@ const unknownEndpoint = (request, response) => {
 app.use(unknownEndpoint);
 
 const PORT = process.env.PORT || 3001;
+
 app.listen(PORT, () => {
   console.log(`listening on ${PORT}`);
 });
