@@ -65,6 +65,7 @@ const App = () => {
             }, 5000);
           })
           .catch((error) => {
+            console.log(error);
             setPersons(persons.filter((person) => person.id !== id));
             setError(
               `Information of ${newName} has already been removed from server`
@@ -100,6 +101,7 @@ const App = () => {
       .deletePerson(id)
       .then(() => setPersons(persons.filter((person) => person.id !== id)))
       .catch((error) => {
+        console.error("Error deleting person:", error);
         setError("Person has already been removed from server");
         setTimeout(() => {
           setSuccess("");

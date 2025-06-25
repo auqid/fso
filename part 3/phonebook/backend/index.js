@@ -6,7 +6,7 @@ const Person = require("./models/person");
 
 app.use(express.json());
 // app.use(cors());
-morgan.token("body", (request, response) => {
+morgan.token("body", (request) => {
   return request.method === "POST" ? JSON.stringify(request.body) : "";
 });
 app.use(
