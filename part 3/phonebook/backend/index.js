@@ -24,7 +24,7 @@ app.get("/api/persons", (request, response, next) => {
 });
 
 // get Total numbers of persons
-app.get("/info", (request, response) => {
+app.get("/info", (request, response, next) => {
   Person.countDocuments({})
     .then((count) => {
       const date = new Date();
@@ -52,36 +52,39 @@ app.get("/api/persons/:id", (request, response, next) => {
 app.delete("/api/persons/:id", (request, response, next) => {
   Person.findByIdAndDelete(request.params.id)
     .then((result) => {
-      response.status(204).end;
+      response.status(204).end();
     })
     .catch((error) => next(error));
 });
 
 // add a person
-app.post("/api/persons", (request, response) => {
+app.post("/api/persons", (request, response, next) => {
   const body = request.body;
 
   if (!body.name || !body.number) {
-    return response.status(404).json({
+    return response.status(400).json({
       error: "Content missing",
     });
   }
-  Person.findOne({ name: body.name }).then((existingPerson) => {
-    if (existingPerson) {
-      response.status(400).json({
-        error: "name must be unique",
-      });
-    }
-  });
-  const person = new Person({
-    number: body.number,
-    name: body.name,
-  });
+  Person.findOne({ name: body.name })
+    .then((existingPerson) => {
+      if (existingPerson) {
+        return response.status(400).json({
+          error: "name must be unique",
+        });
+      }
 
-  person
-    .save()
+      const person = new Person({
+        number: body.number,
+        name: body.name,
+      });
+
+      return person.save();
+    })
     .then((savedPerson) => {
-      response.json(savedPerson);
+      if (savedPerson) {
+        response.json(savedPerson);
+      }
     })
     .catch((error) => next(error));
 });

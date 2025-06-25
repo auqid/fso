@@ -89,7 +89,7 @@ const App = () => {
         }, 5000);
       })
       .catch((error) => {
-        setError("Error adding person");
+        setError(error.response.data.error);
         setTimeout(() => {
           setSuccess("");
         }, 5000);
