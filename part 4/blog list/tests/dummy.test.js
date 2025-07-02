@@ -147,7 +147,7 @@ test("get request to /api/blogs returns the correct amount of blog posts in json
   assert.strictEqual(response.body.length, blogsAfter.length);
 });
 
-test.only("Unique property of of blog is name id", async () => {
+test("Unique property of of blog is name id", async () => {
   const response = await api.get("/api/blogs");
   const blogs = response.body;
 
@@ -155,6 +155,26 @@ test.only("Unique property of of blog is name id", async () => {
     assert.ok(blog.hasOwnProperty("id"));
     assert.ok(!blog.hasOwnProperty("_id"));
   });
+});
+
+test.only("making an HTTP POST request to the /api/blogs URL successfully creates a new blog post.", async () => {
+  const blogsBefore = await Blog.find({});
+  const newBlog = {
+    title: "Blog A",
+    author: "Author A",
+    url: "http://example.com",
+    likes: 5,
+  };
+
+  await api
+    .post("/api/blogs")
+    .send(newBlog)
+    .expect(201)
+    .expect("Content-Type", /application\/json/);
+  const blogsAfter = await Blog.find({});
+  assert.strictEqual(blogsAfter.length, blogsBefore.length + 1);
+  const titles = blogsAfter.map((x) => x.title);
+  assert(titles.includes("Blog A"));
 });
 
 after(async () => {
