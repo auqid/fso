@@ -2,7 +2,7 @@ const blogRouter = require("express").Router();
 const Blog = require("../models/blog");
 
 blogRouter.get("/hello", (request, response) => {
-  response.status(200).send("<h1>hello<h1/>");
+  response.status(200).send("<h1>hello</h1>");
 });
 blogRouter.get("/", async (request, response) => {
   await Blog.find({}).then((blogs) => {
@@ -11,10 +11,10 @@ blogRouter.get("/", async (request, response) => {
 });
 
 blogRouter.post("/", async (request, response) => {
-  const blog = new Blog(request.body);
+  const blogData = request.body;
+  const blog = new Blog(blogData);
 
-  await blog.save().then((result) => {
-    response.status(201).json(result);
-  });
+  const savedBlog = await blog.save();
+  response.status(201).json(savedBlog);
 });
 module.exports = blogRouter;

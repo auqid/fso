@@ -157,24 +157,42 @@ test("Unique property of of blog is name id", async () => {
   });
 });
 
-test.only("making an HTTP POST request to the /api/blogs URL successfully creates a new blog post.", async () => {
+test("making an HTTP POST request to the /api/blogs URL successfully creates a new blog post.", async () => {
   const blogsBefore = await Blog.find({});
   const newBlog = {
     title: "Blog A",
     author: "Author A",
     url: "http://example.com",
-    likes: 5,
+    // likes: 5,
   };
 
-  await api
+  const response = await api
     .post("/api/blogs")
     .send(newBlog)
     .expect(201)
     .expect("Content-Type", /application\/json/);
+  console.log(response.body);
   const blogsAfter = await Blog.find({});
   assert.strictEqual(blogsAfter.length, blogsBefore.length + 1);
   const titles = blogsAfter.map((x) => x.title);
   assert(titles.includes("Blog A"));
+});
+
+test.only("if likes property is missing from request, it defaults to 0", async () => {
+  const newBlog = {
+    title: "Blog A",
+    author: "Author A",
+    url: "http://example.com",
+    // likes: 5,
+  };
+
+  const response = await api
+    .post("/api/blogs")
+    .send(newBlog)
+    .expect(201)
+    .expect("Content-Type", /application\/json/);
+  console.log(response.body);
+  assert.strictEqual(response.body.likes, 0);
 });
 
 after(async () => {
