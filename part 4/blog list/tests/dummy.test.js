@@ -1,7 +1,12 @@
-const { test, describe } = require("node:test");
+const { test, describe, beforeEach, after } = require("node:test");
 const assert = require("node:assert");
-
+const supertest = require("supertest");
+const app = require("../app");
+const api = supertest(app);
+const Blog = require("../models/blog");
 const listHelper = require("../utils/list_helper");
+const mongoose = require("mongoose");
+
 const blogs = [
   {
     _id: "5a422a851b54a676234d17f7",
@@ -52,6 +57,10 @@ const blogs = [
     __v: 0,
   },
 ];
+beforeEach(async () => {
+  await Blog.deleteMany({});
+  await Blog.insertMany(blogs);
+});
 test("dummy returns one", () => {
   const blogs = [];
 
@@ -126,4 +135,20 @@ describe("favorite blog", () => {
     assert.strictEqual(result.likes, 5);
     assert.ok(result.title === "Blog A" || result.title === "Blog B");
   });
+});
+
+test.only("get request to /api/blogs returns the correct amount of blog posts in json", async () => {
+  const response = await api
+    .get("/api/blogs")
+    .expect(200)
+    .expect("Content-Type", /application\/json/);
+  const blogsAfter = await Blog.find({});
+  assert.strictEqual(response.body.length, blogsAfter.length);
+});
+
+after(async () => {
+  console.log("closing connection");
+  const blogs = await Blog.find({});
+  console.log(blogs);
+  await mongoose.connection.close();
 });
