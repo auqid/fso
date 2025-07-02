@@ -178,7 +178,7 @@ test("making an HTTP POST request to the /api/blogs URL successfully creates a n
   assert(titles.includes("Blog A"));
 });
 
-test.only("if likes property is missing from request, it defaults to 0", async () => {
+test("if likes property is missing from request, it defaults to 0", async () => {
   const newBlog = {
     title: "Blog A",
     author: "Author A",
@@ -193,6 +193,18 @@ test.only("if likes property is missing from request, it defaults to 0", async (
     .expect("Content-Type", /application\/json/);
   console.log(response.body);
   assert.strictEqual(response.body.likes, 0);
+});
+test.only("if title or url is missing it returns 400 bad request", async () => {
+  const blogsBefore = await Blog.find({});
+  const newBlog = {
+    // title: "Blog A",
+    author: "Author A",
+    // url: "http://example.com",
+  };
+
+  await api.post("/api/blogs").send(newBlog).expect(400);
+  const blogsAfter = await Blog.find({});
+  assert.strictEqual(blogsAfter.length, blogsBefore.length);
 });
 
 after(async () => {
