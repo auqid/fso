@@ -88,7 +88,7 @@ const mostBlogs = (blogs) => {
   }
   const blogsCount = _.countBy(blogs, "author");
   const max = Object.entries(blogsCount);
-  console.log(max);
+  // console.log(max);
 };
 totalLikes(blogs);
 favoriteBlog(blogs);

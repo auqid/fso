@@ -137,18 +137,28 @@ describe("favorite blog", () => {
   });
 });
 
-test.only("get request to /api/blogs returns the correct amount of blog posts in json", async () => {
+test("get request to /api/blogs returns the correct amount of blog posts in json", async () => {
   const response = await api
     .get("/api/blogs")
     .expect(200)
     .expect("Content-Type", /application\/json/);
   const blogsAfter = await Blog.find({});
+  console.log(response.body, "body>>>>>");
   assert.strictEqual(response.body.length, blogsAfter.length);
+});
+
+test.only("Unique property of of blog is name id", async () => {
+  const response = await api.get("/api/blogs");
+  const blogs = response.body;
+
+  blogs.forEach((blog) => {
+    assert.ok(blog.hasOwnProperty("id"));
+    assert.ok(!blog.hasOwnProperty("_id"));
+  });
 });
 
 after(async () => {
   console.log("closing connection");
   const blogs = await Blog.find({});
-  console.log(blogs);
   await mongoose.connection.close();
 });
