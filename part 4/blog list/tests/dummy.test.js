@@ -194,7 +194,7 @@ test("if likes property is missing from request, it defaults to 0", async () => 
   console.log(response.body);
   assert.strictEqual(response.body.likes, 0);
 });
-test.only("if title or url is missing it returns 400 bad request", async () => {
+test("if title or url is missing it returns 400 bad request", async () => {
   const blogsBefore = await Blog.find({});
   const newBlog = {
     // title: "Blog A",
@@ -205,6 +205,45 @@ test.only("if title or url is missing it returns 400 bad request", async () => {
   await api.post("/api/blogs").send(newBlog).expect(400);
   const blogsAfter = await Blog.find({});
   assert.strictEqual(blogsAfter.length, blogsBefore.length);
+});
+
+test("succeeds with status code 204 if id is valid", async () => {
+  const blogsAtStart = await Blog.find({});
+  const blogToDelete = blogsAtStart[0];
+
+  await api.delete(`/api/blogs/${blogToDelete.id}`).expect(204);
+
+  const blogsAtEnd = await Blog.find({});
+  assert.strictEqual(blogsAtEnd.length, blogsAtStart.length - 1);
+
+  const titles = blogsAtEnd.map((b) => b.title);
+  assert(!titles.includes(blogToDelete.title));
+});
+
+test("succeeds in updating a blog with valid data", async () => {
+  const blogsAtStart = await Blog.find({});
+  const blogToUpdate = blogsAtStart[0];
+
+  const updatedData = {
+    title: "Updated Title",
+    author: "Updated Author",
+    url: "http://updated-url.com",
+    likes: 999,
+  };
+
+  const response = await api
+    .put(`/api/blogs/${blogToUpdate.id}`)
+    .send(updatedData)
+    .expect(200)
+    .expect("Content-Type", /application\/json/);
+
+  assert.strictEqual(response.body.title, "Updated Title");
+  assert.strictEqual(response.body.author, "Updated Author");
+  assert.strictEqual(response.body.url, "http://updated-url.com");
+  assert.strictEqual(response.body.likes, 999);
+
+  const updatedBlog = await Blog.findById(blogToUpdate.id);
+  assert.strictEqual(updatedBlog.title, "Updated Title");
 });
 
 after(async () => {
