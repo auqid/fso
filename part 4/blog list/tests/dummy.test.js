@@ -4,6 +4,7 @@ const supertest = require("supertest");
 const app = require("../app");
 const api = supertest(app);
 const Blog = require("../models/blog");
+const User = require("../models/user");
 const listHelper = require("../utils/list_helper");
 const mongoose = require("mongoose");
 
@@ -244,6 +245,70 @@ test("succeeds in updating a blog with valid data", async () => {
 
   const updatedBlog = await Blog.findById(blogToUpdate.id);
   assert.strictEqual(updatedBlog.title, "Updated Title");
+});
+describe("Users are not created when username is not unique or password/username is less than 3 characters", () => {
+  beforeEach(async () => {
+    await User.deleteMany({});
+
+    const user = new User({
+      username: "root",
+      password: "secret",
+      name: "root",
+    });
+    await user.save();
+  });
+  test("username not unique is not created", async () => {
+    const usersAtStart = await User.find({});
+
+    const newUser = {
+      username: "root",
+      password: "secret",
+      name: "root",
+    };
+    const result = await api
+      .post("/api/users")
+      .send(newUser)
+      .expect(400)
+      .expect("Content-Type", /application\/json/);
+    assert.ok(result.body.error.includes("Expected username to be unique"));
+    const usersAtEnd = await User.find({});
+    assert.strictEqual(usersAtEnd.length, usersAtStart.length);
+  });
+  test("username less than 3 characters is not created", async () => {
+    const usersAtStart = await User.find({});
+
+    const newUser = {
+      username: "ab", // Too short
+      password: "password",
+      name: "Test User",
+    };
+
+    const result = await api.post("/api/users").send(newUser).expect(400);
+
+    assert.ok(result.body.error.includes("username"));
+
+    const usersAtEnd = await User.find({});
+    assert.strictEqual(usersAtEnd.length, usersAtStart.length);
+  });
+
+  test.only("password less than 3 characters is not created", async () => {
+    const usersAtStart = await User.find({});
+
+    const newUser = {
+      username: "testuser",
+      password: "ab", // Too short
+      name: "Test User",
+    };
+
+    const result = await api.post("/api/users").send(newUser).expect(400);
+
+    assert.ok(
+      result.body.error.includes("Password should be 3 characters long")
+    );
+
+    const usersAtEnd = await User.find({});
+    assert.strictEqual(usersAtEnd.length, usersAtStart.length);
+  });
 });
 
 after(async () => {
