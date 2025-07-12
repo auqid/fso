@@ -69,6 +69,21 @@ const App = () => {
       }, 5000);
     }
   };
+  const updateBlog = async (id, formvalues) => {
+    try {
+      const updatedBlog = await blogService.update(id, formvalues);
+      const blogs = await blogService.getAll();
+      setBlogs(blogs);
+      setSuccess(`Blog ${updatedBlog.title} updated successfully`);
+    } catch (error) {
+      console.log(error);
+      setError("Failed to update blog");
+      setTimeout(() => {
+        setError("");
+      }, 5000);
+    }
+  };
+
   const loginForm = () => (
     <form onSubmit={handleLogin}>
       <div>
@@ -101,7 +116,7 @@ const App = () => {
         <BlogForm handleSave={handleSave} />
       </Togglable>
       {blogs.map((blog) => (
-        <Blog key={blog.id} blog={blog} />
+        <Blog key={blog.id} blog={blog} updateBlog={updateBlog} />
       ))}
     </div>
   );

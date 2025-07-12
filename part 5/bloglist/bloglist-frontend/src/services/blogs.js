@@ -21,4 +21,12 @@ const create = async (formvalues) => {
   return response.data;
 };
 
-export default { getAll, create, setToken };
+const update = async (id, formvalues) => {
+  const config = {
+    headers: { Authorization: token },
+  };
+  const response = await axios.put(`${baseUrl}/${id}`, formvalues, config);
+  return response.data;
+};
+
+export default { getAll, create, setToken, update };

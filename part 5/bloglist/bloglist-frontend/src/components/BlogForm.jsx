@@ -1,6 +1,6 @@
 import { React, useState } from "react";
 
-const BlogForm = ({ handleSave }) => {
+const BlogForm = ({ handleSave, updateBlog }) => {
   const [blogForm, setBlogForm] = useState({
     title: "",
     author: "",
@@ -20,6 +20,10 @@ const BlogForm = ({ handleSave }) => {
       author: "",
       url: "",
     });
+  };
+  const updateBlogForm = (event) => {
+    event.preventDefault();
+    console.log("Updating blog with:", blogForm);
   };
   return (
     <div>
