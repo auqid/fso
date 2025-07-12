@@ -85,6 +85,25 @@ const App = () => {
     }
   };
 
+  const deleteBlog = async (id) => {
+    try {
+      console.log("Deleting blog with ID:", id);
+      await blogService.deleteBlog(id);
+      const blogs = await blogService.getAll();
+      setBlogs(blogs);
+      setSuccess("Blog deleted successfully");
+      setTimeout(() => {
+        setSuccess("");
+      }, 5000);
+    } catch (error) {
+      console.log(error);
+      setError("Failed to delete blog");
+      setTimeout(() => {
+        setError("");
+      }, 5000);
+    }
+  };
+
   const loginForm = () => (
     <form onSubmit={handleLogin}>
       <div>
@@ -117,7 +136,12 @@ const App = () => {
         <BlogForm handleSave={handleSave} />
       </Togglable>
       {blogs.map((blog) => (
-        <Blog key={blog.id} blog={blog} updateBlog={updateBlog} />
+        <Blog
+          key={blog.id}
+          blog={blog}
+          updateBlog={updateBlog}
+          deleteBlog={deleteBlog}
+        />
       ))}
     </div>
   );

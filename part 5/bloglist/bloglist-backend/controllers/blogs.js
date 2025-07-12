@@ -54,6 +54,7 @@ blogRouter.delete("/:id", async (request, response) => {
 });
 
 blogRouter.put("/:id", async (request, response) => {
+  console.log(request.body.user.id, "request.body.user.id");
   const updatedBlog = await Blog.findByIdAndUpdate(
     request.params.id,
     {
@@ -61,11 +62,11 @@ blogRouter.put("/:id", async (request, response) => {
       author: request.body.author,
       url: request.body.url,
       likes: request.body.likes,
-      user: request.body.user.id || request.body.user._id || request.body.user,
+      // user: request.body.user.id,
     },
     { new: true, runValidators: true }
-  );
-
+  ).populate("user", { username: 1, name: 1 });
+  console.log(updatedBlog, "updatedBlog");
   if (!updatedBlog) {
     return response.status(404).end();
   }
