@@ -11,11 +11,7 @@ const App = () => {
   const [user, setUser] = useState(null);
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(null);
-  const [blogForm, setBlogForm] = useState({
-    title: "",
-    author: "",
-    url: "",
-  });
+
   console.log(password, username);
   console.log(user);
   useEffect(() => {
@@ -32,7 +28,7 @@ const App = () => {
   }, []);
   const blogRef = useRef();
   console.log(blogs);
-  console.log(blogForm);
+
   console.log(user);
   const handleLogin = async (event) => {
     event.preventDefault();
@@ -54,24 +50,13 @@ const App = () => {
     window.localStorage.removeItem("loggedBlogUser");
     setUser(null);
   };
-  const handleSave = async (event) => {
-    event.preventDefault();
+  const handleSave = async (noteObject) => {
     blogRef.current.toggle();
     try {
-      const newBlog = await blogService.create({
-        title: blogForm.title,
-        author: blogForm.author,
-        url: blogForm.url,
-      });
-
+      const newBlog = await blogService.create(noteObject);
+      console.log("New blog created:", newBlog);
       const blogs = await blogService.getAll();
       setBlogs(blogs);
-      setBlogForm({
-        title: "",
-        author: "",
-        url: "",
-      });
-
       setSuccess(`A new blog ${newBlog.title} by ${newBlog.author} added`);
       setTimeout(() => {
         setSuccess("");
@@ -113,11 +98,7 @@ const App = () => {
       <br />
       <br />
       <Togglable buttonLabel="new blog" ref={blogRef}>
-        <BlogForm
-          handleSave={handleSave}
-          blogForm={blogForm}
-          setBlogForm={setBlogForm}
-        />
+        <BlogForm handleSave={handleSave} />
       </Togglable>
       {blogs.map((blog) => (
         <Blog key={blog.id} blog={blog} />

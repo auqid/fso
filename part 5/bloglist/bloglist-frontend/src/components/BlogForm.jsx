@@ -1,10 +1,30 @@
-import React from "react";
+import { React, useState } from "react";
 
-const BlogForm = ({ handleSave, blogForm, setBlogForm }) => {
+const BlogForm = ({ handleSave }) => {
+  const [blogForm, setBlogForm] = useState({
+    title: "",
+    author: "",
+    url: "",
+  });
+  const createBlog = (event) => {
+    event.preventDefault();
+    const newBlog = {
+      title: blogForm.title,
+      author: blogForm.author,
+      url: blogForm.url,
+    };
+    handleSave(newBlog);
+    // Reset the form fields after saving
+    setBlogForm({
+      title: "",
+      author: "",
+      url: "",
+    });
+  };
   return (
     <div>
       <h2>Create new</h2>
-      <form onSubmit={handleSave}>
+      <form onSubmit={createBlog}>
         title
         <input
           type="text"
