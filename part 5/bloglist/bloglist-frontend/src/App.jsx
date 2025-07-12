@@ -4,6 +4,7 @@ import blogService from "./services/blogs";
 import loginService from "./services/login";
 import BlogForm from "./components/BlogForm";
 import Togglable from "./components/Togglable";
+import LoginForn from "./components/LoginForm";
 const App = () => {
   const [blogs, setBlogs] = useState([]);
   const [username, setUsername] = useState("");
@@ -151,7 +152,17 @@ const App = () => {
   return (
     <>
       {error}
-      {user === null ? loginForm() : blogList()}
+      {user === null ? (
+        <LoginForn
+          handleLogin={handleLogin}
+          username={username}
+          password={password}
+          setUsername={setUsername}
+          setPassword={setPassword}
+        />
+      ) : (
+        blogList()
+      )}
     </>
   );
 };
