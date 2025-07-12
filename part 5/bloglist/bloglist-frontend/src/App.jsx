@@ -71,6 +71,7 @@ const App = () => {
   };
   const updateBlog = async (id, formvalues) => {
     try {
+      console.log("Updating blog with ID:", id, "and values:", formvalues);
       const updatedBlog = await blogService.update(id, formvalues);
       const blogs = await blogService.getAll();
       setBlogs(blogs);

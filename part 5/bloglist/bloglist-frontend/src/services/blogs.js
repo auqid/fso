@@ -1,4 +1,5 @@
 import axios from "axios";
+
 const baseUrl = "/api/blogs";
 let token = null;
 
@@ -25,6 +26,7 @@ const update = async (id, formvalues) => {
   const config = {
     headers: { Authorization: token },
   };
+
   const response = await axios.put(`${baseUrl}/${id}`, formvalues, config);
   return response.data;
 };
