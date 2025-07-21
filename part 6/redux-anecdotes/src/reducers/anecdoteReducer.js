@@ -42,7 +42,7 @@ const reducer = (state = initialState, action) => {
       return state;
   }
 };
-
+console.log("asdsd");
 export const vote = (id) => {
   return {
     type: "VOTE",
