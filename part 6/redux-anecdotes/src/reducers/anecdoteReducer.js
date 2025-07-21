@@ -16,38 +16,45 @@ const asObject = (anecdote) => {
     votes: 0,
   };
 };
+//mapping the Anecdotes array onto an object.
+const initialState = anecdotesAtStart.map((x) => asObject(x));
 
-const initialState = anecdotesAtStart.map(asObject);
-console.log(initialState);
 const reducer = (state = initialState, action) => {
   switch (action.type) {
     case "VOTE": {
-      //find the id
       const id = action.payload.id;
-
-      //find the anecdote
-      const anecdote = state.find((x) => x.id === id);
-      console.log(anecdote);
-      const changedAnecdote = {
-        ...anecdote,
-        votes: anecdote.votes + 1,
+      const anecdoteChanged = state.find((x) => x.id === id);
+      const newAnecdote = {
+        ...anecdoteChanged,
+        votes: anecdoteChanged.votes + 1,
       };
-
       return state.map((anecdote) =>
-        anecdote.id === id ? changedAnecdote : anecdote
+        anecdote.id === id ? newAnecdote : anecdote
       );
     }
-
+    case "NEW_NOTE": {
+      const payload = action.payload;
+      return state.concat(payload);
+    }
     default:
       return state;
   }
 };
-console.log("asdsd");
+
 export const vote = (id) => {
   return {
     type: "VOTE",
     payload: { id },
   };
 };
-
+export const newAnecdote = (content) => {
+  return {
+    type: "NEW_NOTE",
+    payload: {
+      content: content,
+      id: getId(),
+      votes: 0,
+    },
+  };
+};
 export default reducer;
