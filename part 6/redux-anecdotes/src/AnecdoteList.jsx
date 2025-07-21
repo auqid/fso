@@ -1,8 +1,12 @@
 import { useSelector, useDispatch } from "react-redux";
+import { useMemo } from "react";
 import { vote } from "./reducers/anecdoteReducer";
 const AnecdoteList = () => {
   const anecdotes = useSelector((state) => state);
-  const sortedAnecdotes = [...anecdotes].sort((a, b) => b.votes - a.votes);
+  const memoizedSorted = useMemo(
+    () => [...anecdotes].sort((a, b) => b.votes - a.votes),
+    [anecdotes]
+  );
   const dispatch = useDispatch();
 
   const handleVote = (id) => {
@@ -12,7 +16,7 @@ const AnecdoteList = () => {
   return (
     <div>
       <h2>Anecdotes</h2>
-      {sortedAnecdotes.map((anecdote) => (
+      {memoizedSorted.map((anecdote) => (
         <div key={anecdote.id}>
           <div>{anecdote.content}</div>
           <div>
