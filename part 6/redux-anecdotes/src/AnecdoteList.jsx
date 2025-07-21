@@ -2,7 +2,14 @@ import { useSelector, useDispatch } from "react-redux";
 import { useMemo } from "react";
 import { vote } from "./reducers/anecdoteReducer";
 const AnecdoteList = () => {
-  const anecdotes = useSelector((state) => state);
+  const anecdotes = useSelector(({ filter, anecdotes }) => {
+    if (filter === "") {
+      return anecdotes;
+    }
+    return anecdotes.filter((anecdote) =>
+      anecdote.content.toLowerCase().includes(filter.toLowerCase())
+    );
+  });
   const memoizedSorted = useMemo(
     () => [...anecdotes].sort((a, b) => b.votes - a.votes),
     [anecdotes]
