@@ -39,7 +39,8 @@ const anecdoteSlice = createSlice({
     },
     newAnecdote(state, action) {
       const payload = action.payload;
-      return state.concat(payload);
+
+      return state.concat(asObject(payload));
     },
   },
 });
