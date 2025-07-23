@@ -1,10 +1,7 @@
 import { useSelector, useDispatch } from "react-redux";
 import { useMemo } from "react";
 import { upvote } from "../reducers/anecdoteReducer";
-import {
-  clearNotification,
-  setNotificationPopup,
-} from "../reducers/notificationReducer";
+import { setNotificationPopup } from "../reducers/notificationReducer";
 const AnecdoteList = () => {
   const anecdotes = useSelector(({ filter, anecdotes }) => {
     if (filter === "") {
